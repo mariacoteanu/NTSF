@@ -1,0 +1,29 @@
+﻿Compilare:
+→ Am creat un MAKEFILE care contine exact sintaxa necesara pentru a porni serverul/clientul
+1. Deschideti un terminal si rulati “make server” si va porni serverul
+2. Deschide cate terminale doriti pentru clienti si rulati “make client”
+
+Implementare:
+Diferit fata de raportul tehnic din tema 2, am abandonat ideea de TCP/IP cu prethreaded si am implementat TCP/IP cu select() si creare de procese cu fork() in care se desfasoara fiecare joc in parte. De asemenea, cu ajutorul bibliotecii “sqlite3” am creat o baza de date in care se adauga username-urile jucatorilor, scor obtinut, cate jocuri a pierdut/castigat, iar la finalul jocului este afisat clasamentul pentru jocul ce abia s-a terminat, dar si cei mai buni 3 jucatori din toata baza de date.
+
+Reguli Joc:
+Intr-un joc sunt de la 2 la 4 jucatori. Jucatorul 1→Galben,Jucatorul 2→Verde,Jucatorul 3→Rosu,Jucatorul 4→Albastru. Fiecare jucator va da cu zarul. Aveti 4 pioni. Pentru a scoate un pion pe tabla va trebui sa dati cu zarul 6. In continuare, la un alt numar, pionul se va muta pe tabla, cat este numarul de pe zar pana cand ajungeti la baza respectiva fiecarei culori(pion scos deja pe tabla, altfel asteptati pana la 6). Daca sunteti pornit cu macar un pion in joc, si pe zar aveti un 6, aveti optiunea de a muta 6 pozitii sau sa scoateti un nou pion in joc. Mai mult decat atat, daca in pozitia in care va mutati era deja un pion al altui jucator, acel pion va fi trimis acasa! Daca ati introdus toti cei 4 pioni in baza, ati catigat, SCORUL este numarul de pioni adaugati in baza la finalul jocului.
+
+Desfasurare joc:
+→ in server, se deschide/creeaza baza de date si tabelul JUCATORI, la fiecare 15 secunde sunt interogati cati clienti s-au conectat, astfel jocul porneste cu un numar de la 2 pana la 4 jucatori si pot porni mai multe jocuri simultan, un singur jucator nu este suficient si va fi inchis. Prin pornirea jocului ma refer ca se apeleaza functia “FORK()” in care creez un nou proces pentru joc, desfasurarea lui se realizeaza in pid-ul copil.
+→ in client, la conectare vi se va cere un “username” si veti fi informati al cata-lea jucator sunteti si cati jucatori jucati, astfel, la fiecare tura, vi se va cere numarul dumneavoastra de ordine pentru a da cu zarul, de asemenea veti primi informatii pe tot parcursul jocului de ceea ce urmeaza sa faceti. Cand ati dat un 6 puteti muta un pion in joc, iar dumneavoastra veti hotari care, un numar de la 1-4 si abia atunci incepe cu adevarat jocul. Apoi la fiecare tura, veti muta un pion deja initiat, nu altul(veti primi mesaj daca numarul pionului ales este bun sau nu), iar la o valoare noua de 6, puteti alege sa initiati pion nou sau mutati 6 pozitii. In final, va fi afisata activitatea jucatorului:scorul,cate jocuri castigate/pierdute are.
+
+Bibliografie proiect:
+→ serverul si clientul din laboratorul 7, cel cu select(): https://profs.info.uaic.ro/~computernetworks/cursullaboratorul.php
+→ pentru trimiterea unor adrese in functii
+https://stackoverflow.com/questions/48023721/pass-by-reference-to-a-recursive-function
+→ pentru time(NULL)
+https://stackoverflow.com/questions/18171620/getting-the-time-of-x-minutes-ago-in-c
+→ in client, aveam o mica problema cu ceea ce se citea de la stdin, adica nu citea, si punea 0 si asa ca am anulat bufferul de la stdin prin adaugare inainte de fgets ,setbuf(stdin,NULL)
+https://stackoverflow.com/questions/34219549/how-to-properly-flush-stdin-in-fgets-loop
+
+→ pentru baza de date:
+https://profs.info.uaic.ro/~bd/wiki/index.php/Pagina_principal%C4%83
+https://www.sqlitetutorial.net/sqlite-limit/
+https://www.tutorialspoint.com/sqlite/sqlite_c_cpp.htm
+
